@@ -1,0 +1,41 @@
+'on':
+  github:
+    branches:
+      only: main
+jobs:
+  CloneRepo:
+    resources:
+      instance-type: C5
+    outputs:
+      repo:
+        type: volume
+    uses: git-checkout@v1
+    with:
+      url: context.event.github.url
+process:
+  - task: convert_mp4_to_audio
+    description: Converts an MP4 file to an audio format using ffmpeg.
+    inputs:
+      mp4_file: "the_reality_war_part_4 (540p).mp4"  # This will be the path to the MP4 file.
+    outputs:
+      audio_file: "output.mp3"  # This will be the path to the resulting audio file.
+    steps:
+      - use: ffmpeg
+        args: ['-i', '{mp4_file}', '-q:a', '0', '-map', 'a', '{audio_file}']
+
+  - task: transcribe_audio
+    description: Transcribes audio using the Whisper model.
+    inputs:
+      audio_file: "output.mp3"  # This will be the path to the audio file.
+    outputs:
+      output_dir: "G:/GPTs/Vimeo/v1"  # Directory where the transcription will be saved.
+      output_filename: "transcription.txt"  # Filename for the saved transcription.
+    steps:
+      - action: ensure_directory
+        path: "{output_dir}"
+      - action: load_whisper_model
+        model_size: "tiny"
+      - action: transcribe
+        audio_file: "{audio_file}"
+      - action: save_transcription
+        output_path: "{output_dir}/{output_filename}"
