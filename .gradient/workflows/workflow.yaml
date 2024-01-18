@@ -21,9 +21,9 @@ jobs:
       repo: CloneRepo.outputs.repo
     uses: script@v1
     with:
-      script: ls -la /inputs/repo/
-      # or use 'script: dir /inputs/repo/' for Windows
-      image: ubuntu:latest  # Use an appropriate image
+      # script: ls -la /inputs/repo/
+      script: dir /inputs/repo/
+      image: windows:latest  # Use an appropriate image
   HelloWorld:
     resources:
       instance-type: C5
