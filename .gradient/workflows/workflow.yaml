@@ -12,6 +12,18 @@ jobs:
     uses: git-checkout@v1
     with:
       url: context.event.github.url
+  ListDirectoryContents:
+    resources:
+      instance-type: C5
+    needs:
+      - CloneRepo
+    inputs:
+      repo: CloneRepo.outputs.repo
+    uses: script@v1
+    with:
+      script: ls -la /inputs/repo/
+      # or use 'script: dir /inputs/repo/' for Windows
+      image: ubuntu:latest  # Use an appropriate image
   HelloWorld:
     resources:
       instance-type: C5
